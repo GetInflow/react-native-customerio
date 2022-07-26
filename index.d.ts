@@ -17,6 +17,15 @@ export = CIO
          }
      }
 
+     namespace TrackPushMetric {
+        interface Payload {
+            delivery_id: string;
+            device_id: string;
+            event: 'opened' | 'converted' | 'delivered';
+            timestamp: number;
+        }
+     }
+
       namespace TrackAnonymous {
          interface Payload {
              name: string,
@@ -31,8 +40,24 @@ export = CIO
 
       // MARK: - Device
      namespace Device {
-         type Payload = object
          type Platform = 'ios' | 'android'
+
+         type Attributes = {
+            device_os?: Platform
+            device_model?: string
+            app_version?: string
+            cio_sdk_version?: string
+            device_locale?: string
+            push_enabled?: "true" | "false",
+            [key: string]: string
+         }
+
+         type Payload = {
+            id: string
+            platform: Platform
+            last_used?: number
+            attributes?: Attributes
+         }
      }
 
       // MARK: - Broadcast
@@ -94,6 +119,9 @@ export = CIO
       * it is required to send a name key/value pair in you data object. */
      track(customerId: string, payload: CIO.Track.Payload): Promise<void>
 
+     /** The trackPushMetric method is used to report device-side push metrics—opened, converted, and delivered—back to Customer.io, so you can track the effectiveness of your push notifications.*/
+     trackPushMetric(payload: CIO.TrackPushMetric.Payload): Promise<void>
+
       /** Anonymous event tracking does not require a customer ID and these events will not be associated with a tracked profile in Customer.io */
      trackAnonymous(payload: CIO.TrackAnonymous.Payload): Promise<void>
 
@@ -102,7 +130,7 @@ export = CIO
 
       // MARK: - Device
      /** Add a device to send push notifications. */
-     addDevice(customerId: string, deviceId: string, platform: CIO.Device.Platform, payload: CIO.Device.Payload): Promise<void>
+     addDevice(customerId: string, payload: CIO.Device.Payload): Promise<void>
 
       /** Delete a device to remove it from the associated customer and stop sending push notifications to it. */
      deleteDevice(customerId: string, deviceId: string): Promise<void>
