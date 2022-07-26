@@ -69,6 +69,21 @@ cio.destroy(1);
 
 ---
 
+### cio.trackPushMetric(id, data)
+
+The trackPushMetric method is used to report device-side push metrics—opened, converted, and delivered—back to Customer.io, so you can track the effectiveness of your push notifications.
+
+**Simple PushMetric event tracking**
+
+```
+cio.trackPushMetric(1, { 
+  device_id: 'fdsjfklds',
+  delivery_id: 'dkdjfskd',
+  event: 'delivered | opened | converted',
+  timestamp: 3434343
+});
+```
+
 ### cio.track(id, data)
 
 The track method will trigger events within Customer.io. When sending data along with your event, it is required to send a name key/value pair in you data object.
@@ -158,19 +173,28 @@ cio.triggerBroadcast(1, { name: 'foo'},  { emails: ['example@emails.com'], email
 * **data**: Object (optional)
 * **recipients**: Object (optional)
 
-### cio.addDevice(id, device_id, platform, data)
+### cio.addDevice(id, data)
 Add a device to send push notifications.
 
 ```
-cio.addDevice(1, "device_id", "ios", { primary: true });
+cio.addDevice(customerId, { 
+  id: "push_token", 
+  platform: "ios",
+  last_used: 12343243,
+  attributes: {
+    device_model: 'iPhone 12 Pro',
+    device_os: 'ios',
+    app_version: '1.2',
+    push_enabled: 'true'
+    ...any other customer attributes
+  }
+ });
 ```
 
 #### Options
 
 * **customer_id**: String (required)
-* **device_id**: String (required)
-* **platform**: String (required)
-* **data**: Object (optional)
+* **data**: Object (required)
 
 ### cio.deleteDevice(id, device_id)
 Delete a device to remove it from the associated customer and stop sending push notifications to it.
